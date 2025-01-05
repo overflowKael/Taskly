@@ -18,7 +18,7 @@ export default function WorkspacePage(){
         
     ]
     return (
-        <div className="w-full overflow-x-auto flex items-center h-full gap-10 px-5 py-10">
+        <div className="w-full overflow-x-auto flex items-start h-full gap-10 px-5 py-10">
             {
                 statusCards.map((statusCard) =>{
                     return <StatusCard key={statusCard.name} {...statusCard} />
