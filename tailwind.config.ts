@@ -20,8 +20,14 @@ export default {
         light: {
           layout: {},
           colors: {
-
-          }
+            background: '#f7f7f7', // Fondo gris claro
+            primary: '#333333', // Texto principal oscuro
+            secondary: '#1e293b', // Texto secundario gris
+            content1: '#f1f5f9', // Gris claro para elementos de acento
+            success: '#4caf50', // Verde para éxito
+            warning: '#f44336', // Rojo para error
+            content2: '#b0b0b0', // Gris suave
+          },
         },
         dark: {
           layout: {},
