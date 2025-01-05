@@ -8,4 +8,5 @@ export interface TaskInterface{
     tags? : string[];
     id : string;
     spaceEmptyVisible? : boolean;
+    beforeSpace? : boolean;
 }

@@ -1,6 +1,6 @@
 "use client";
 import { StatusCardInterface } from "@/interfaces";
-import { Card, CardHeader, CardBody, CardFooter, Divider } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 import TaskCard from './TaskCard';
 import { TaskInterface } from "@/interfaces";
 import { IoAdd } from "react-icons/io5";
@@ -8,7 +8,6 @@ import { Tasks } from "./tasks";
 import React, { useEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { Form, Input, Button } from "@nextui-org/react";
-import { filter } from "framer-motion/client";
 
 export default function StatusCard(Props: StatusCardInterface) {
     const [tasks, setTasks] = useState<TaskInterface[]>([]);
@@ -16,7 +15,7 @@ export default function StatusCard(Props: StatusCardInterface) {
     const [newTaskId, setNewTaskId] = useState("");
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [isTaskDragging, setIsTaskDragging] = useState(false);
-    const [ isTaskOverDrop , setIsTaskOverDrop ] = useState(-1);
+    const [ isTaskOverDrop , setIsTaskOverDrop ] = useState(-2);
 
     useEffect(() => {
         setTasks(Tasks);
@@ -54,28 +53,37 @@ export default function StatusCard(Props: StatusCardInterface) {
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setIsTaskDragging(false);
-        setIsTaskOverDrop(-1);
+        setIsTaskOverDrop(-2);
         // console.log("Dropping task here : " , event);
     }
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setIsTaskDragging(true);
-        let numberOfTasks = filterTask(Props.name).length-1
-        let y = event.clientY;
+        const numberOfTasks = filterTask(Props.name).length-1
+        const y = event.clientY;
 
         const tasksByStatus = document.getElementsByClassName(Props.name.replace(" " , "") + "task");
         console.log(y);
+
+        
+
         for (let i = 0; i < tasksByStatus.length; i++) {
             const task = tasksByStatus[i];
-            
+
             const rect = task.getBoundingClientRect();
-            if( (y <= rect.top || (y >= rect.top && y <= rect.bottom)) || i === numberOfTasks){
+            if(  (y >= rect.top && y <= rect.bottom)  || i === numberOfTasks || (y < tasksByStatus[i+1].getBoundingClientRect().top && i)){
                 setIsTaskOverDrop(i);
                 break;
             }
+
+            if(!i && y < ( rect.top )){
+                setIsTaskOverDrop(-1);
+                break;
+            } 
             
         }
+        
         //console.log("Dragging task over here : " , event);
     }
 
@@ -85,7 +93,7 @@ export default function StatusCard(Props: StatusCardInterface) {
         // Verifica si el mouse salió completamente del contenedor
         if (!event.currentTarget.contains(event.relatedTarget as Node)) {
             setIsTaskDragging(false);
-            setIsTaskOverDrop(-1);
+            setIsTaskOverDrop(-2);
         }
     };
     /**/
@@ -99,7 +107,7 @@ export default function StatusCard(Props: StatusCardInterface) {
             <CardBody className={`w-full py-2 px-4 flex flex-col gap-4 bg-content1 ${isTaskDragging ? 'bg-content2' : ''}`} >
                 {
                     filterTask(Props.name).map((task, index) => {
-                        return <TaskCard key={index} {...task} spaceEmptyVisible={isTaskOverDrop === index} />
+                        return <TaskCard key={index} {...task} spaceEmptyVisible={isTaskOverDrop === index} beforeSpace={ isTaskOverDrop === -1 && index === 0 } />
                     })
                 }
 
@@ -123,7 +131,7 @@ export default function StatusCard(Props: StatusCardInterface) {
 
                         </PopoverTrigger>
                         <PopoverContent className="w-[300px]"  >
-                            {(props) => (
+                            {() => (
                                 <Form className="flex flex-col gap-4 w-[240px] py-2 px-2" onSubmit={handleSubmit} >
                                     <Input className="w-full p-2 text-[30px]" variant="underlined" placeholder="Task Name" onChange={onNameChange} />
                                     <Input className="w-full p-2" size="md" variant="underlined" placeholder="Id de la tarea" onChange={onIdChange} />

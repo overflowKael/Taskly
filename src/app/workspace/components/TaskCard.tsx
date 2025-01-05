@@ -8,7 +8,6 @@ import { FaTag } from "react-icons/fa";
 import React, { useState } from "react";
 import { buildDragImage } from "@/components/buildDragImage";
 import EmptyTask from "./EmptyTask";
-import { div } from "framer-motion/client";
 
 export default function TaskCard(Props: TaskInterface) {
     const [isDragging, setIsDragging] = useState(false);
@@ -19,16 +18,14 @@ export default function TaskCard(Props: TaskInterface) {
         setIsDragging(true);
 
     }
-    const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
-        setIsDragging(false);
-    }
+   
 
     return (
         <div className={`flex flex-col gap-4 ${Props.status.replace(" " , "") + "task"}`}>
-            <Card className={`bg-background ${isDragging ? 'bg-content1' : ''}`}
+            <Card className={`bg-background order-2 ${isDragging ? 'bg-content1' : ''}`}
             draggable={true}
             onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}>
+            >
             <CardHeader className="w-full ">
                 <Tooltip content="Complete Task">
                     <Checkbox className="text-primary" checked={false} color="success" />
@@ -49,7 +46,7 @@ export default function TaskCard(Props: TaskInterface) {
             </CardFooter>
             
         </Card>
-        <EmptyTask className={Props.spaceEmptyVisible ? "" : "hidden"} />
+        <EmptyTask className={Props.spaceEmptyVisible ? "order-3" :  `${Props.beforeSpace ? "order-1" : "hidden"}`  } />
         </div>
         
     )
