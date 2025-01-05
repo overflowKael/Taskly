@@ -12,7 +12,7 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalContextProvider = ({children} : { children : React.ReactNode}) => {
 
-    const [theme , setTheme] = useState("light");
+    const [theme , setTheme] = useState("dark");
 
     return (
         <GlobalContext.Provider value={{theme, setTheme}}>

@@ -7,6 +7,8 @@ import { FaUsers } from "react-icons/fa";
 import { FaTag } from "react-icons/fa";
 import React, { useState } from "react";
 import { buildDragImage } from "@/components/buildDragImage";
+import EmptyTask from "./EmptyTask";
+import { div } from "framer-motion/client";
 
 export default function TaskCard(Props: TaskInterface) {
     const [isDragging, setIsDragging] = useState(false);
@@ -22,7 +24,8 @@ export default function TaskCard(Props: TaskInterface) {
     }
 
     return (
-        <Card className={`bg-background ${isDragging ? 'bg-content1' : ''}`}
+        <div className={`flex flex-col gap-4 ${Props.status.replace(" " , "") + "task"}`}>
+            <Card className={`bg-background ${isDragging ? 'bg-content1' : ''}`}
             draggable={true}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}>
@@ -44,6 +47,10 @@ export default function TaskCard(Props: TaskInterface) {
                     <FaTag className="text-secondary" />
                 </div>
             </CardFooter>
+            
         </Card>
+        <EmptyTask className={Props.spaceEmptyVisible ? "" : "hidden"} />
+        </div>
+        
     )
 }

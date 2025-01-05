@@ -7,4 +7,5 @@ export interface TaskInterface{
     priority? : number;
     tags? : string[];
     id : string;
+    spaceEmptyVisible? : boolean;
 }

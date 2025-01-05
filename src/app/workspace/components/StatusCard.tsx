@@ -8,6 +8,7 @@ import { Tasks } from "./tasks";
 import React, { useEffect, useState } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { Form, Input, Button } from "@nextui-org/react";
+import { filter } from "framer-motion/client";
 
 export default function StatusCard(Props: StatusCardInterface) {
     const [tasks, setTasks] = useState<TaskInterface[]>([]);
@@ -15,6 +16,7 @@ export default function StatusCard(Props: StatusCardInterface) {
     const [newTaskId, setNewTaskId] = useState("");
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [isTaskDragging, setIsTaskDragging] = useState(false);
+    const [ isTaskOverDrop , setIsTaskOverDrop ] = useState(-1);
 
     useEffect(() => {
         setTasks(Tasks);
@@ -52,12 +54,28 @@ export default function StatusCard(Props: StatusCardInterface) {
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setIsTaskDragging(false);
+        setIsTaskOverDrop(-1);
         // console.log("Dropping task here : " , event);
     }
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         setIsTaskDragging(true);
+        let numberOfTasks = filterTask(Props.name).length-1
+        let y = event.clientY;
+
+        const tasksByStatus = document.getElementsByClassName(Props.name.replace(" " , "") + "task");
+        console.log(y);
+        for (let i = 0; i < tasksByStatus.length; i++) {
+            const task = tasksByStatus[i];
+            
+            const rect = task.getBoundingClientRect();
+            if( (y <= rect.top || (y >= rect.top && y <= rect.bottom)) || i === numberOfTasks){
+                setIsTaskOverDrop(i);
+                break;
+            }
+            
+        }
         //console.log("Dragging task over here : " , event);
     }
 
@@ -67,6 +85,7 @@ export default function StatusCard(Props: StatusCardInterface) {
         // Verifica si el mouse salió completamente del contenedor
         if (!event.currentTarget.contains(event.relatedTarget as Node)) {
             setIsTaskDragging(false);
+            setIsTaskOverDrop(-1);
         }
     };
     /**/
@@ -77,10 +96,10 @@ export default function StatusCard(Props: StatusCardInterface) {
                 {Props.name}
             </CardHeader>
             <Divider className="" />
-            <CardBody className={` w-full py-2 px-4 flex flex-col gap-4 bg-content1 ${isTaskDragging ? 'bg-content2' : ''}`} >
+            <CardBody className={`w-full py-2 px-4 flex flex-col gap-4 bg-content1 ${isTaskDragging ? 'bg-content2' : ''}`} >
                 {
                     filterTask(Props.name).map((task, index) => {
-                        return <TaskCard key={index} {...task} />
+                        return <TaskCard key={index} {...task} spaceEmptyVisible={isTaskOverDrop === index} />
                     })
                 }
 
